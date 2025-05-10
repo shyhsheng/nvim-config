@@ -21,8 +21,8 @@ return {
                     layout_strategy = "horizontal",
                     layout_config = {
                         --preview_width = 0.6,
-                        width = 0.6,
-                        height = 0.8,
+                        width = 0.9,
+                        height = 0.9,
                     },
                     file_ignore_patterns = {
                         "node_modules/",
