@@ -4,31 +4,68 @@ return {
   dependencies = { "nvim-tree/nvim-web-devicons" },
   event = "VeryLazy",
   config = function()
-    vim.opt.termguicolors = true
-    vim.cmd([[
-        hi BufferLineBufferSelected gui=underline guifg=#66d9ef guibg=#3e3e3e
-        hi BufferLineBufferVisible gui=underline guifg=#66d9ef guibg=#2e2e2e
-    ]])
+    vim.opt.termguicolors = true,
     require("bufferline").setup({
-        --[[highlights = {
-            indicator_selected = {
-                fg = "#ff0000",   -- 紅色的指示器（圖示）
-                sp = "#ff0000",   -- 底線的顏色
+        highlights = {
+            fill = {
+                bg = "#1a1b26",
             },
-            buffer_selected = {
-                guifg = "#66d9ef",  -- 文字顏色
-                guibg = "#3e3e3e",  -- 背景顏色
-                gui = "underline",   -- 確保使用下劃線
+            background = {
+                fg = "#7aa2f7",
+                bg = "#24283b",  -- 比 fill 深一點，區分背景
             },
             buffer_visible = {
-                gui = "underline",   -- 也給非選中的 buffer 添加下劃線
-                guifg = "#c0c0c0",    -- 顯示顏色（可根據需求調整）
-                guibg = "#2e2e2e",
+                fg = "#7aa2f7",
+                bg = "#24283b",
             },
-        },]]
+            buffer_selected = {
+                fg = "#f38ba8",
+                bg = "#3b4261",
+                bold = true,
+                italic = false,
+            },
+            separator = {
+                fg = "#1a1b26",
+                bg = "#1a1b26",
+            },
+            separator_visible = {
+                fg = "#1a1b26",
+                bg = "#24283b",
+            },
+            separator_selected = {
+                fg = "#3b4261",
+                bg = "#3b4261",
+            },
+            modified_selected = {
+                fg = "#f7768e",
+                bg = "#3b4261",
+            },
+            indicator_selected = {
+                fg = "#7aa2f7",
+                sp = "#7aa2f7",
+                underline = true,
+            },
+            close_button = {
+                fg = "#7aa2f7",
+                bg = "#24283b",
+            },
+            close_button_visible = {
+                fg = "#7aa2f7",
+                bg = "#24283b",
+            },
+            close_button_selected = {
+                fg = "#f7768e",
+                bg = "#3b4261",
+            },
+            offset_separator = {
+                fg = "#1a1b26",  -- 關鍵設定，避免 separator 延伸進 NvimTree
+                bg = "#1a1b26",
+            },
+        },
         options = {
             mode = "buffers",
-            separator_style = "slant",
+            --separator_style = "slant",
+            separator_style = {"▍", "▍"},
             diagnostics = "nvim_lsp",
             show_buffer_close_icons = true,
             show_close_icon = true,
@@ -41,6 +78,8 @@ return {
                 text = "File Explorer",
                 highlight = "Directory",
                 text_align = "left",
+                separator = true,  -- Enable separator
+                padding = 1,      -- Add space between NvimTree and bufferline
             }},
             close_command = function(bufnr)
                 --[[找出所有可切換的非 NvimTree buffer
@@ -88,11 +127,6 @@ return {
             end,
         },
     })
-    --[[vim.api.nvim_set_hl(0, "BufferLineIndicatorSelected", {
-        underline = true,
-        sp = "#ff0000",
-        fg = "#ff0000",
-    })]]
 
     -- 快捷鍵切換 buffer（可選）
     vim.keymap.set("n", "<C-Right>", "<Cmd>BufferLineCycleNext<CR>", { desc = "下一個 buffer" })
