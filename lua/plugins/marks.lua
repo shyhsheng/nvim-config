@@ -19,7 +19,7 @@ return {
         })
     end,
 }
-
+    -- 'a              Move to specific mark
     -- mx              Set mark x
     -- m,              Set the next available alphabetical (lowercase) mark
     -- m;              Toggle the next available mark at the current line
