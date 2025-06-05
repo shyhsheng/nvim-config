@@ -6,4 +6,4 @@ vim.opt.expandtab = true
 vim.opt.mouse = "a"
 vim.opt.clipboard = "unnamedplus"
 vim.opt.cursorline = true
-
+vim.opt.ignorecase = true
