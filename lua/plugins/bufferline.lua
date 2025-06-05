@@ -19,7 +19,7 @@ return {
                 bg = "#24283b",
             },
             buffer_selected = {
-                fg = "#f38ba8",
+                fg = "#ff9e64",
                 bg = "#3b4261",
                 bold = true,
                 italic = false,
