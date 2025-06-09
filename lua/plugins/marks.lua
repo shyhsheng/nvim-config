@@ -16,6 +16,10 @@ return {
                 sign = "⚑", -- or any icon you like
                 virt_text = "Bookmark",
             },
+            mappings = {
+                next = "<F2>",
+                prev = "<F14>", -- Shift + F2
+            }
         })
     end,
 }
