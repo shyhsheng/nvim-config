@@ -1,6 +1,7 @@
 return {
     {
         "nvim-treesitter/nvim-treesitter",
+        lazy = false,
         build = ":TSUpdate", -- 安裝或更新語法解析器
         event = { "BufReadPost", "BufNewFile" }, -- 當打開檔案時啟用
         dependencies = {
