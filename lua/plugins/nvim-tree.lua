@@ -46,7 +46,7 @@ return {
 
         -- 快捷鍵
         vim.keymap.set("n", "<leader>n", "<cmd>NvimTreeToggle<CR>", { desc = "Toggle File Explorer" })
-        vim.keymap.set("n", "<leader>f", "<cmd>NvimTreeFindFile<CR>", { desc = "Focus current file in tree" })
+        --vim.keymap.set("n", "<leader>f", "<cmd>NvimTreeFindFile<CR>", { desc = "Focus current file in tree" })
 
         -- 開啟 Neovim 時自動啟用 NvimTree（如果是目錄）
         local function open_nvim_tree(data)
