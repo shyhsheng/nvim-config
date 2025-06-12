@@ -47,6 +47,19 @@ return {
                             fallback()
                         end
                     end, { "i", "s" }),
+                    ['<Down>'] = cmp.mapping(function(fallback)
+                        if cmp.visible() then
+                            cmp.close()
+                        end
+                        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Down>', true, true, true), 'n', true)
+                    end, { 'i' }),
+                    ['<Up>'] = cmp.mapping(function(fallback)
+                        if cmp.visible() then
+                            cmp.close()
+                        end
+                        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Up>', true, true, true), 'n', true)
+                    end, { 'i' }),
+                    ['<C-e>'] = cmp.mapping.close(),
                 }),
                 formatting = {
                     format = require("lspkind").cmp_format({
