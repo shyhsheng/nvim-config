@@ -1,3 +1,99 @@
+local telescope_config = {}
+
+local picker_opts = {
+    layout_strategy = "horizontal",
+    layout_config = {
+        width = 0.4,
+        height = 0.6,
+        prompt_position = "top",
+    },
+}
+
+function telescope_config.grep_by_filetype()
+    local builtin = require("telescope.builtin")
+    local entry_display = require("telescope.pickers.entry_display")
+    -- local themes = require("telescope.themes")
+    -- themes.get_dropdown({ width = 0.5, height = 0.4 })
+
+    local filetypes = {
+        { type = "custom", desc = "自訂 filetype" },
+        { type = "ALL", desc = "All Type" },
+        { type = "CA", desc = "C/C++" },
+        { type = "lua", desc = "Lua" },
+        { type = "java", desc = "Java" },
+        { type = "python", desc = "Python" },
+        { type = "cpp", desc = "C++" },
+        { type = "c", desc = "C" },
+        { type = "go", desc = "Golang" },
+        { type = "rust", desc = "Rust" },
+        { type = "sh", desc = "Shell script" },
+        { type = "bash", desc = "Bash script" },
+        { type = "html", desc = "HTML" },
+        { type = "css", desc = "CSS" },
+        { type = "javascript", desc = "JavaScript" },
+        { type = "typescript", desc = "TypeScript" },
+        { type = "markdown", desc = "Markdown" },
+        { type = "json", desc = "JSON" },
+        { type = "yaml", desc = "YAML" },
+    }
+
+    local displayer = entry_display.create({ separator = "  ", items = { { width = 15 }, { remaining = true } } })
+
+    local function make_entry(entry)
+        return {
+            value = entry,
+            display = function(e) return displayer({ e.value.type, e.value.desc }) end,
+            ordinal = entry.type .. " " .. entry.desc,
+        }
+    end
+
+    require("telescope.pickers").new(picker_opts, {
+        prompt_title = "Select Grep File Type",
+        finder = require("telescope.finders").new_table({ results = filetypes, entry_maker = make_entry }),
+        sorter = require("telescope.config").values.generic_sorter({}),
+        previewer = false,
+        attach_mappings = function(prompt_bufnr, map)
+            local actions = require("telescope.actions")
+            local action_state = require("telescope.actions.state")
+
+            local function select()
+                local selection = action_state.get_selected_entry()
+                actions.close(prompt_bufnr)
+                if not selection then return end
+
+                local type_name = selection.value.type
+                local args = {}
+
+                if type_name == "sh" then
+                    args = { "--type-add=sh:*.sh", "--type=sh" }
+                elseif type_name == "lua_cpp" then
+                    args = { "--type=lua", "--type=cpp" }
+                elseif type_name == "custom" then
+                    vim.ui.input({ prompt = "輸入自訂 filetype (可用空白分隔多個) > " }, function(user_input)
+                        if not user_input or user_input == "" then return end
+                        args = {}
+                        for ft in user_input:gmatch("%S+") do
+                            table.insert(args, "--type=" .. ft)
+                        end
+                        builtin.live_grep({ additional_args = args, prompt_title = "Grep: " .. user_input })
+                    end)
+                    return
+                elseif type_name == "ALL" then
+                    args = {}
+                else
+                    args = { "--type=" .. type_name }
+                end
+
+                builtin.live_grep({ additional_args = args, prompt_title = "Grep: " .. type_name })
+            end
+
+            map("i", "<CR>", select)
+            map("n", "<CR>", select)
+            return true
+        end,
+    }):find()
+end
+
 return {
     {
         "nvim-telescope/telescope.nvim",
@@ -15,6 +111,7 @@ return {
             { "<leader>fb", "<cmd>Telescope buffers<cr>",    desc = "Buffers" },
             { "<leader>fh", "<cmd>Telescope help_tags<cr>",  desc = "Help Tags" },
             { "<leader>fm", "<cmd>Telescope marks<cr>",  desc = "Search marks" },
+            { "<leader>ft", function() telescope_config.grep_by_filetype() end, desc = "Live Grep by Filetype" },
         },
         config = function()
             require("telescope").setup({
@@ -72,5 +169,4 @@ return {
         end
     }
 }
-
 
