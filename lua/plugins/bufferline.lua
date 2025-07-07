@@ -4,7 +4,51 @@ return {
   dependencies = { "nvim-tree/nvim-web-devicons" },
   event = "VeryLazy",
   config = function()
-    vim.opt.termguicolors = true,
+    vim.opt.termguicolors = true
+    local function deleteCurrentBuffer(bufnr)
+        --[[找出所有可切換的非 NvimTree buffer
+            local buffers = vim.tbl_filter(function(buf)
+                return vim.api.nvim_buf_is_loaded(buf)
+                    and vim.api.nvim_buf_get_option(buf, 'buflisted')
+                    and not vim.api.nvim_buf_get_name(buf):match('NvimTree_')
+            end, vim.api.nvim_list_bufs())
+
+            -- 切換到另一個 buffer（只要不是這個）
+            for _, buf in ipairs(buffers) do
+                if buf ~= bufnr then
+                    vim.api.nvim_set_current_buf(buf)
+                    break
+                end
+            end
+
+            -- 刪除原本 buffer
+            vim.cmd('bdelete ' .. bufnr)--]]
+
+        local buffers = require("bufferline.state").components
+        local target_index = nil
+
+        for i, comp in ipairs(buffers) do
+            if comp.id == bufnr then
+                target_index = i
+                break
+            end
+        end
+
+        if target_index and target_index > 1 then
+            -- 切到左邊的 buffer
+            local left_bufnr = buffers[target_index - 1].id
+            vim.api.nvim_set_current_buf(left_bufnr)
+        elseif target_index and #buffers > 1 then
+            -- 沒有左邊的就試右邊
+            local right_bufnr = buffers[target_index + 1].id
+            if right_bufnr then
+                vim.api.nvim_set_current_buf(right_bufnr)
+            end
+        end
+
+        -- 最後刪除原本 buffer
+        vim.cmd('bdelete ' .. bufnr)
+    end
     require("bufferline").setup({
         highlights = {
             fill = {
@@ -82,56 +126,17 @@ return {
                 padding = 1,      -- Add space between NvimTree and bufferline
             }},
             close_command = function(bufnr)
-                --[[找出所有可切換的非 NvimTree buffer
-                local buffers = vim.tbl_filter(function(buf)
-                    return vim.api.nvim_buf_is_loaded(buf)
-                        and vim.api.nvim_buf_get_option(buf, 'buflisted')
-                        and not vim.api.nvim_buf_get_name(buf):match('NvimTree_')
-                end, vim.api.nvim_list_bufs())
-
-                -- 切換到另一個 buffer（只要不是這個）
-                for _, buf in ipairs(buffers) do
-                    if buf ~= bufnr then
-                        vim.api.nvim_set_current_buf(buf)
-                        break
-                    end
-                end
-
-                -- 刪除原本 buffer
-                vim.cmd('bdelete ' .. bufnr)--]]
-
-                local buffers = require("bufferline.state").components
-                local target_index = nil
-
-                for i, comp in ipairs(buffers) do
-                    if comp.id == bufnr then
-                        target_index = i
-                        break
-                    end
-                end
-
-                if target_index and target_index > 1 then
-                    -- 切到左邊的 buffer
-                    local left_bufnr = buffers[target_index - 1].id
-                    vim.api.nvim_set_current_buf(left_bufnr)
-                elseif target_index and #buffers > 1 then
-                    -- 沒有左邊的就試右邊
-                    local right_bufnr = buffers[target_index + 1].id
-                    if right_bufnr then
-                        vim.api.nvim_set_current_buf(right_bufnr)
-                    end
-                end
-
-                -- 最後刪除原本 buffer
-                vim.cmd('bdelete ' .. bufnr)
+                deleteCurrentBuffer(bufnr)
             end,
         },
     })
-
     -- 快捷鍵切換 buffer（可選）
     vim.keymap.set("n", "<C-Right>", "<Cmd>BufferLineCycleNext<CR>", { desc = "下一個 buffer" })
     vim.keymap.set("n", "<C-Left>", "<Cmd>BufferLineCyclePrev<CR>", { desc = "上一個 buffer" })
     vim.keymap.set("n", "<C-S-Left>", "<Cmd>BufferLineMovePrev<CR>", { desc = "Move buffer left" })
     vim.keymap.set("n", "<C-S-Right>", "<Cmd>BufferLineMoveNext<CR>", { desc = "Move buffer right" })
+    vim.keymap.set("n", "<leader>w", function()
+      deleteCurrentBuffer(vim.api.nvim_get_current_buf())
+    end , { desc = "Close current buffer" })
   end,
 }
