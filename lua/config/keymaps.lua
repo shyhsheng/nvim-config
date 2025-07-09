@@ -8,5 +8,4 @@ end, { desc = "Save and stay in Normal mode" })
 vim.keymap.set("v", "<", "<gv", { desc = "Indent to the right consecutive"}) -- Increase indent
 vim.keymap.set("v", ">", ">gv", { desc = "Indent to the left consecutive"}) --Decrease indent
 
-vim.keymap.set("n", "<leader>g", 'ggVG"+y', { desc = "Select All and Copy to system clipboard"})
-
+vim.keymap.set("n", "vv", 'ggVG', { desc = "Select All"})
